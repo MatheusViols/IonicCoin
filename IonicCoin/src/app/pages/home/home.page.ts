@@ -158,18 +158,23 @@ export class HomePage implements OnInit {
     if (this.amount !== null && this.amount > 0 && this.conversionRates[this.toCurrency]) {
       this.currentRate = this.conversionRates[this.toCurrency];
       this.result = this.amount * this.currentRate;
-      this.saveToHistory();
     } else {
       this.result = null;
       this.currentRate = this.conversionRates[this.toCurrency] ?? null;
     }
   }
 
-  /** Trata a mudança no campo de valor */
+  /** Chamado pelo botão "Converter" — único ponto que calcula e grava no histórico */
+  onConvert() {
+    if (this.amount === null || this.amount <= 0) return;
+    this.calculate();
+    this.saveToHistory();
+  }
+
+  /** Trata a mudança no campo de valor — apenas actualiza amount em memória */
   onAmountChange(event: CustomEvent) {
     const value = event.detail.value;
     this.amount = value !== '' && value !== null ? parseFloat(value) : null;
-    this.calculate();
   }
 
   /** Trata a mudança na moeda de origem — recarrega as taxas */
@@ -177,16 +182,17 @@ export class HomePage implements OnInit {
     this.loadRates(this.fromCurrency);
   }
 
-  /** Trata a mudança na moeda de destino — recalcula com as taxas já carregadas */
+  /** Trata a mudança na moeda de destino — limpa resultado para forçar novo clique em Converter */
   onToCurrencyChange() {
-    this.calculate();
+    this.result = null;
   }
 
-  /** Inverte as moedas de origem e destino e recarrega as taxas */
+  /** Inverte as moedas de origem e destino, limpa resultado e recarrega as taxas */
   swapCurrencies() {
     const temp = this.fromCurrency;
     this.fromCurrency = this.toCurrency;
     this.toCurrency = temp;
+    this.result = null;
     this.loadRates(this.fromCurrency);
   }
 

@@ -92,6 +92,18 @@
           </div>
         </div>
 
+        <!-- Botão de Conversão -->
+        <div class="convert-btn-container">
+          <ion-button 
+            expand="block" 
+            class="convert-btn"
+            [disabled]="!amount || amount <= 0 || isLoading"
+            (click)="onConvert()">
+            <ion-icon slot="start" name="swap-horizontal-outline"></ion-icon>
+            Converter
+          </ion-button>
+        </div>
+
         <!-- Área de Resultado e Taxas -->
         <div class="result-section" [class.is-loading]="isLoading">
           <div class="result-label">Resultado da Conversão</div>

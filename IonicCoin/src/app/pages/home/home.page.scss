@@ -164,7 +164,39 @@ ion-toolbar {
   }
 }
 
+// Botão de Conversão
+.convert-btn-container {
+  margin-bottom: 20px;
+
+  .convert-btn {
+    --background: var(--primary-gradient);
+    --background-activated: #1a5ac7;
+    --border-radius: 12px;
+    --box-shadow: 0 4px 16px rgba(56, 128, 255, 0.35);
+    --color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    height: 52px;
+    transition: var(--transition-smooth);
+
+    &:not([disabled]):hover {
+      --box-shadow: 0 6px 24px rgba(56, 128, 255, 0.5);
+      transform: translateY(-2px);
+    }
+
+    &[disabled] {
+      opacity: 0.45;
+    }
+
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+}
+
 .result-section {
+
   text-align: center;
   background: var(--ion-color-step-50, #f8f9fa);
   border-radius: 12px;
