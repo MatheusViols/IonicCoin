@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { 
   IonHeader, 
   IonToolbar, 
@@ -18,10 +19,11 @@ import {
   IonSelect, 
   IonSelectOption, 
   IonButton, 
+  IonButtons,
   IonBadge 
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { cashOutline, swapHorizontalOutline, cloudDoneOutline, cloudOfflineOutline, alertCircleOutline } from 'ionicons/icons';
+import { cashOutline, swapHorizontalOutline, cloudDoneOutline, cloudOfflineOutline, alertCircleOutline, timeOutline } from 'ionicons/icons';
 import { ExchangeRateService } from '../../services/exchange-rate.service';
 import { CurrencyService } from '../../services/currency.service';
 import { StorageService } from '../../services/storage.service';
@@ -35,6 +37,7 @@ import { Conversion } from '../../models/conversion.model';
   imports: [
     FormsModule,
     DecimalPipe,
+    RouterLink,
     IonHeader, 
     IonToolbar, 
     IonTitle, 
@@ -51,6 +54,7 @@ import { Conversion } from '../../models/conversion.model';
     IonSelect, 
     IonSelectOption, 
     IonButton, 
+    IonButtons,
     IonBadge
   ],
 })
@@ -81,7 +85,7 @@ export class HomePage implements OnInit {
     private currencyService: CurrencyService,
     private storageService: StorageService
   ) {
-    addIcons({ cashOutline, swapHorizontalOutline, cloudDoneOutline, cloudOfflineOutline, alertCircleOutline });
+    addIcons({ cashOutline, swapHorizontalOutline, cloudDoneOutline, cloudOfflineOutline, alertCircleOutline, timeOutline });
   }
 
   ngOnInit() {

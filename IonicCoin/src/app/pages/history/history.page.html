@@ -1,0 +1,85 @@
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Voltar"></ion-back-button>
+    </ion-buttons>
+    
+    <ion-title>
+      <div class="header-content">
+        <ion-icon name="time-outline" class="logo-icon"></ion-icon>
+        <span>Histórico</span>
+      </div>
+    </ion-title>
+
+    <ion-buttons slot="end" *ngIf="!showEmptyState">
+      <ion-button (click)="clearHistory()" class="clear-btn">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-header collapse="condense" class="ion-no-border">
+    <ion-toolbar>
+      <ion-title size="large">Histórico</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="history-container">
+    <!-- Estado Vazio (Empty State) -->
+    <div *ngIf="showEmptyState || mockConversions.length === 0" class="empty-state-container">
+      <div class="empty-icon-wrapper">
+        <ion-icon name="time-outline" class="empty-icon"></ion-icon>
+      </div>
+      <h3 class="empty-title">Sem Registros</h3>
+      <p class="empty-description">
+        Suas conversões recentes aparecerão listadas aqui automaticamente.
+      </p>
+      <ion-button fill="outline" routerLink="/home" class="go-back-btn">
+        Converter Agora
+      </ion-button>
+    </div>
+
+    <!-- Lista de Conversões -->
+    <div *ngIf="!showEmptyState && mockConversions.length > 0" class="history-list">
+      <div class="history-header-summary">
+        <span>{{ mockConversions.length }} conversões salvas</span>
+      </div>
+
+      <ion-card *ngFor="let item of mockConversions" class="history-card">
+        <ion-card-content class="card-layout">
+          
+          <div class="conversion-row">
+            <!-- Moeda Origem -->
+            <div class="currency-side source-side">
+              <span class="amount-value">{{ item.amount | number:'1.2-4' }}</span>
+              <span class="currency-badge">{{ item.fromCurrency }}</span>
+            </div>
+
+            <!-- Divisor/Direção -->
+            <div class="arrow-container">
+              <span class="conversion-arrow">➔</span>
+            </div>
+
+            <!-- Moeda Destino -->
+            <div class="currency-side target-side">
+              <span class="amount-value highlight">{{ item.result | number:'1.2-2' }}</span>
+              <span class="currency-badge target">{{ item.toCurrency }}</span>
+            </div>
+          </div>
+
+          <div class="footer-row">
+            <span class="rate-details">
+              Taxa: 1 {{ item.fromCurrency }} = {{ item.rate | number:'1.2-4' }} {{ item.toCurrency }}
+            </span>
+            <span class="time-details">
+              {{ item.timestamp | date:'dd/MM/yyyy HH:mm' }}
+            </span>
+          </div>
+
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

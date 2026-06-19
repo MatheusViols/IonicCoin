@@ -23,6 +23,12 @@ ion-toolbar {
       color: var(--primary-color);
     }
   }
+
+  .history-nav-btn {
+    --color: var(--primary-color);
+    font-size: 20px;
+    margin-inline-end: 8px;
+  }
 }
 
 .main-container {
