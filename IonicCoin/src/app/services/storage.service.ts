@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
+import { Conversion } from '../models/conversion.model';
 
 @Injectable({
   providedIn: 'root'
@@ -56,6 +57,26 @@ export class StorageService {
 
   async getRates(baseCode: string): Promise<any> {
     return await this.get(`rates_${baseCode}`);
+  }
+
+  // Métodos para histórico de conversões
+
+  /** Salva uma conversão no histórico (mais recente primeiro, limite de 100) */
+  async saveConversion(conversion: Conversion): Promise<void> {
+    const history: Conversion[] = (await this.get('conversion_history')) || [];
+    history.unshift(conversion);
+    const trimmed = history.slice(0, 100);
+    await this.set('conversion_history', trimmed);
+  }
+
+  /** Retorna o histórico completo de conversões salvas */
+  async getHistory(): Promise<Conversion[]> {
+    return (await this.get('conversion_history')) || [];
+  }
+
+  /** Remove todo o histórico de conversões */
+  async clearHistory(): Promise<void> {
+    await this.remove('conversion_history');
   }
 
   // Função auxiliar para garantir que a inicialização foi concluída antes de qualquer operação

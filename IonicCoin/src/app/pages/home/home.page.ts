@@ -190,7 +190,7 @@ export class HomePage implements OnInit {
     this.loadRates(this.fromCurrency);
   }
 
-  /** Salva a conversão atual no histórico (StorageService será integrado na Etapa 4) */
+  /** Salva a conversão atual no histórico persistente (SQLite/IndexedDB) */
   private saveToHistory() {
     if (this.amount === null || this.result === null || this.currentRate === null) return;
 
@@ -204,7 +204,8 @@ export class HomePage implements OnInit {
       timestamp: Date.now()
     };
 
-    // TODO: this.storageService.saveConversion(conversion);
-    console.log('Conversão registrada (aguardando StorageService):', conversion);
+    this.storageService.saveConversion(conversion).catch(err => {
+      console.error('Erro ao salvar conversão no histórico:', err);
+    });
   }
 }

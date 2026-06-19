@@ -27,8 +27,13 @@
   </ion-header>
 
   <div class="history-container">
+    <!-- Spinner de Carregamento -->
+    <div *ngIf="isLoading" class="loading-container">
+      <ion-spinner name="crescent" class="history-spinner"></ion-spinner>
+    </div>
+
     <!-- Estado Vazio (Empty State) -->
-    <div *ngIf="showEmptyState || mockConversions.length === 0" class="empty-state-container">
+    <div *ngIf="!isLoading && showEmptyState" class="empty-state-container">
       <div class="empty-icon-wrapper">
         <ion-icon name="time-outline" class="empty-icon"></ion-icon>
       </div>
@@ -42,12 +47,12 @@
     </div>
 
     <!-- Lista de Conversões -->
-    <div *ngIf="!showEmptyState && mockConversions.length > 0" class="history-list">
+    <div *ngIf="!isLoading && !showEmptyState && conversions.length > 0" class="history-list">
       <div class="history-header-summary">
-        <span>{{ mockConversions.length }} conversões salvas</span>
+        <span>{{ conversions.length }} conversões salvas</span>
       </div>
 
-      <ion-card *ngFor="let item of mockConversions" class="history-card">
+      <ion-card *ngFor="let item of conversions" class="history-card">
         <ion-card-content class="card-layout">
           
           <div class="conversion-row">
