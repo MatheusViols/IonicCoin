@@ -18,4 +18,8 @@ export const routes: Routes = [
     path: 'settings',
     loadComponent: () => import('./pages/settings/settings.page').then( m => m.SettingsPage)
   },
+  {
+    path: 'chart',
+    loadComponent: () => import('./pages/chart/chart.page').then( m => m.ChartPage)
+  },
 ];
