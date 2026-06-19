@@ -1,0 +1,218 @@
+:host {
+  --primary-color: #3880ff;
+  --accent-color: #0cd1e8;
+  --card-bg: var(--ion-card-background, #ffffff);
+  --border-radius-lg: 16px;
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+ion-toolbar {
+  --background: transparent;
+  --color: var(--ion-text-color);
+  
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    
+    .logo-icon {
+      font-size: 24px;
+      color: var(--primary-color);
+    }
+  }
+
+  .clear-btn {
+    --color: var(--ion-color-danger, #eb445a);
+    font-size: 20px;
+    margin-inline-end: 8px;
+  }
+}
+
+.history-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 530px;
+  margin: 0 auto;
+  min-height: calc(100vh - 120px);
+}
+
+// -------------------------------------------------------------
+// Estado Vazio (Empty State)
+// -------------------------------------------------------------
+.empty-state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 24px;
+  margin-top: 15vh;
+  width: 100%;
+
+  .empty-icon-wrapper {
+    background: rgba(var(--ion-color-step-200-rgb, 224, 224, 224), 0.2);
+    border-radius: 50%;
+    padding: 24px;
+    margin-bottom: 24px;
+    border: 1px dashed var(--ion-color-step-300);
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    .empty-icon {
+      font-size: 64px;
+      color: var(--ion-color-step-400);
+    }
+  }
+
+  .empty-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--ion-color-step-800);
+    margin: 0 0 10px 0;
+  }
+
+  .empty-description {
+    font-size: 13.86px; // 14px - 1%
+    color: var(--ion-color-step-500);
+    margin: 0 0 28px 0;
+    max-width: 280px;
+    line-height: 1.5;
+  }
+
+  .go-back-btn {
+    --border-radius: 12px;
+    --border-width: 1.5px;
+    --color: var(--primary-color);
+    --border-color: var(--primary-color);
+    margin: 0;
+    font-weight: 600;
+  }
+}
+
+// -------------------------------------------------------------
+// Lista de Histórico
+// -------------------------------------------------------------
+.history-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 40px;
+}
+
+.history-header-summary {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--ion-color-step-500);
+  margin-bottom: 6px;
+  padding-left: 4px;
+}
+
+.history-card {
+  margin: 0;
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(var(--ion-text-color-rgb), 0.05);
+  background: var(--card-bg);
+  transition: var(--transition-smooth);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    border-color: rgba(var(--primary-color-rgb, 56, 128, 255), 0.2);
+  }
+
+  .card-layout {
+    padding: 16px;
+  }
+}
+
+.conversion-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+
+.currency-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &.source-side {
+    align-items: flex-start;
+  }
+
+  &.target-side {
+    align-items: flex-end;
+  }
+
+  .amount-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ion-color-step-800);
+    letter-spacing: -0.3px;
+
+    &.highlight {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--primary-color);
+    }
+  }
+
+  .currency-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--ion-color-step-100);
+    color: var(--ion-color-step-700);
+
+    &.target {
+      background: rgba(56, 128, 255, 0.1);
+      color: var(--primary-color);
+    }
+  }
+}
+
+.arrow-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+
+  .conversion-arrow {
+    font-size: 16px;
+    color: var(--ion-color-step-400);
+    font-weight: 600;
+  }
+}
+
+.footer-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(var(--ion-text-color-rgb), 0.05);
+  padding-top: 10px;
+  font-size: 11.88px; // 12px - 1%
+  color: var(--ion-color-step-500);
+
+  .rate-details {
+    font-weight: 500;
+  }
+
+  .time-details {
+    color: var(--ion-color-step-400);
+  }
+}
