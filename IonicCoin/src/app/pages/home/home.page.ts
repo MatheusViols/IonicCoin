@@ -98,6 +98,17 @@ export class HomePage implements OnInit {
     this.isLoading = true;
     this.errorMessage = null;
 
+    // Se estiver em modo manual, tenta carregar primeiro do cache e evita chamada à API
+    const savedFrequency = await this.storageService.get('update_frequency');
+    if (savedFrequency === 'manual') {
+      const cached = await this.loadFromCache(baseCode);
+      if (cached) {
+        this.isOffline = !navigator.onLine;
+        this.isLoading = false;
+        return;
+      }
+    }
+
     // Se offline, tenta obter taxas do cache local diretamente
     if (!navigator.onLine) {
       const cached = await this.loadFromCache(baseCode);

@@ -36,14 +36,21 @@
             </ion-select>
           </ion-item>
 
-          <ion-item>
-            <ion-icon slot="start" name="moon-outline" color="tertiary"></ion-icon>
-            <ion-label>
-              <h2>Modo Escuro</h2>
-              <p>Aparência do aplicativo</p>
-            </ion-label>
-            <ion-toggle slot="end" [(ngModel)]="darkMode" (ionChange)="onDarkModeChange()"></ion-toggle>
-          </ion-item>
+          @if (updateFrequency === 'manual') {
+            <ion-item lines="none" class="manual-update-item">
+              <ion-button slot="end" size="small" fill="outline" color="primary" [disabled]="isUpdating" (click)="updateRatesManually()">
+                @if (isUpdating) {
+                  <ion-spinner name="crescent" slot="start"></ion-spinner>
+                  A atualizar...
+                } @else {
+                  <ion-icon name="refresh-outline" slot="start"></ion-icon>
+                  Atualizar Agora
+                }
+              </ion-button>
+            </ion-item>
+          }
+
+
 
           <ion-item>
             <ion-icon slot="start" name="notifications-outline" color="success"></ion-icon>
@@ -58,17 +65,6 @@
       </ion-card-content>
     </ion-card>
 
-    <ion-card class="settings-card danger-card">
-      <ion-card-header>
-        <ion-card-title color="danger">Dados do Aplicativo</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p class="danger-text">Apagar todo o histórico de conversões e limpar o cache armazenado no dispositivo local.</p>
-        <ion-button expand="block" color="danger" class="clear-btn" (click)="clearData()">
-          <ion-icon slot="start" name="trash-outline"></ion-icon>
-          Apagar Dados e Cache
-        </ion-button>
-      </ion-card-content>
-    </ion-card>
+
   </div>
 </ion-content>

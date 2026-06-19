@@ -4,10 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { 
   IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, 
   IonSelect, IonSelectOption, IonToggle, IonLabel, IonIcon, 
-  IonButton, IonButtons, IonBackButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle
+  IonButton, IonButtons, IonBackButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle,
+  IonSpinner
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { syncOutline, notificationsOutline, moonOutline, trashOutline } from 'ionicons/icons';
+import { syncOutline, notificationsOutline, refreshOutline } from 'ionicons/icons';
+import { StorageService } from '../../services/storage.service';
+import { ExchangeRateService } from '../../services/exchange-rate.service';
+import { ToastController } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-settings',
@@ -17,34 +21,67 @@ import { syncOutline, notificationsOutline, moonOutline, trashOutline } from 'io
   imports: [
     IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule,
     IonList, IonItem, IonSelect, IonSelectOption, IonToggle, IonLabel, 
-    IonIcon, IonButton, IonButtons, IonBackButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle
+    IonIcon, IonButtons, IonBackButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle,
+    IonButton, IonSpinner
   ]
 })
 export class SettingsPage implements OnInit {
   updateFrequency: string = 'hourly';
-  darkMode: boolean = true;
   notifications: boolean = false;
+  isUpdating: boolean = false;
 
-  constructor() {
-    addIcons({ syncOutline, notificationsOutline, moonOutline, trashOutline });
+  constructor(
+    private storageService: StorageService,
+    private exchangeRateService: ExchangeRateService,
+    private toastController: ToastController
+  ) {
+    addIcons({ syncOutline, notificationsOutline, refreshOutline });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    const savedFrequency = await this.storageService.get('update_frequency');
+    if (savedFrequency) {
+      this.updateFrequency = savedFrequency;
+    }
+    const savedNotifications = await this.storageService.get('notifications_enabled');
+    if (savedNotifications !== null && savedNotifications !== undefined) {
+      this.notifications = savedNotifications;
+    }
   }
 
-  onFrequencyChange() {
-    // Será integrado com o serviço futuramente
+  async onFrequencyChange() {
+    await this.storageService.set('update_frequency', this.updateFrequency);
   }
 
-  onDarkModeChange() {
-    // Será integrado com o serviço futuramente
+  async onNotificationsChange() {
+    await this.storageService.set('notifications_enabled', this.notifications);
   }
 
-  onNotificationsChange() {
-    // Será integrado com o serviço futuramente
+  async showToast(message: string, color: 'success' | 'danger') {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2500,
+      position: 'bottom',
+      color
+    });
+    await toast.present();
   }
 
-  clearData() {
-    // Será integrado com o serviço futuramente
+  updateRatesManually() {
+    if (this.isUpdating) return;
+    this.isUpdating = true;
+
+    // Atualiza as taxas com base na moeda principal do sistema (USD)
+    this.exchangeRateService.getExchangeRates('USD').subscribe({
+      next: async (response) => {
+        this.isUpdating = false;
+        await this.showToast('Taxas de câmbio atualizadas com sucesso!', 'success');
+      },
+      error: async (error) => {
+        this.isUpdating = false;
+        await this.showToast(`Erro ao atualizar taxas: ${error.message || error}`, 'danger');
+      }
+    });
   }
 }
+
