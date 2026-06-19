@@ -98,14 +98,23 @@ export class HomePage implements OnInit {
     this.isLoading = true;
     this.errorMessage = null;
 
-    // Se estiver em modo manual, tenta carregar primeiro do cache e evita chamada à API
-    const savedFrequency = await this.storageService.get('update_frequency');
-    if (savedFrequency === 'manual') {
-      const cached = await this.loadFromCache(baseCode);
-      if (cached) {
-        this.isOffline = !navigator.onLine;
-        this.isLoading = false;
-        return;
+    // Lógica de Frequência de Atualização
+    const savedFrequency = await this.storageService.get('update_frequency') || 'hourly';
+    
+    if (savedFrequency === 'manual' || savedFrequency === 'hourly') {
+      const cachedData = await this.storageService.getRates(baseCode);
+      if (cachedData && cachedData.timestamp) {
+        const timeElapsed = Date.now() - cachedData.timestamp;
+        
+        // Se for manual OU for hourly e passou menos de 1 hora (3600000 ms)
+        if (savedFrequency === 'manual' || (savedFrequency === 'hourly' && timeElapsed < 3600000)) {
+          const cached = await this.loadFromCache(baseCode);
+          if (cached) {
+            this.isOffline = !navigator.onLine;
+            this.isLoading = false;
+            return;
+          }
+        }
       }
     }
 
