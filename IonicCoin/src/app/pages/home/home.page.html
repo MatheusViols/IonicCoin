@@ -1,20 +1,86 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" class="ion-no-border">
   <ion-toolbar>
     <ion-title>
-      Blank
+      <div class="header-content">
+        <ion-icon name="cash-outline" class="logo-icon"></ion-icon>
+        <span>IonicCoin</span>
+      </div>
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-header collapse="condense" class="ion-no-border">
     <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+      <ion-title size="large">IonicCoin</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <div class="main-container">
+    <ion-card class="converter-card">
+      <ion-card-header>
+        <ion-card-subtitle>Câmbio em Tempo Real</ion-card-subtitle>
+        <ion-card-title>Conversor</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <!-- Campo de entrada do valor -->
+        <div class="input-container">
+          <ion-item fill="outline" class="amount-item">
+            <ion-label position="floating">Valor a converter</ion-label>
+            <ion-input 
+              type="number" 
+              placeholder="0,00" 
+              inputmode="decimal"
+              class="amount-input">
+            </ion-input>
+          </ion-item>
+        </div>
+
+        <!-- Seletores de Moeda -->
+        <div class="selectors-wrapper">
+          <div class="select-box">
+            <ion-label class="select-label">De</ion-label>
+            <ion-item fill="outline">
+              <ion-select placeholder="Selecione">
+                <ion-select-option value="USD">USD - Dólar Americano</ion-select-option>
+                <ion-select-option value="BRL">BRL - Real Brasileiro</ion-select-option>
+                <ion-select-option value="EUR">EUR - Euro</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </div>
+
+          <div class="swap-button-container">
+            <ion-button fill="clear" class="swap-btn">
+              <ion-icon slot="icon-only" name="swap-horizontal-outline"></ion-icon>
+            </ion-button>
+          </div>
+
+          <div class="select-box">
+            <ion-label class="select-label">Para</ion-label>
+            <ion-item fill="outline">
+              <ion-select placeholder="Selecione">
+                <ion-select-option value="USD">USD - Dólar Americano</ion-select-option>
+                <ion-select-option value="BRL">BRL - Real Brasileiro</ion-select-option>
+                <ion-select-option value="EUR">EUR - Euro</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </div>
+        </div>
+
+        <!-- Área de Resultado e Taxas -->
+        <div class="result-section">
+          <div class="result-label">Resultado da Conversão</div>
+          <h1 class="result-value">--,--</h1>
+          <p class="rate-info">Carregando taxa de câmbio...</p>
+          <ion-badge color="success" class="status-badge">
+            <ion-icon name="cloud-done-outline"></ion-icon>
+            <span>Taxas Atualizadas</span>
+          </ion-badge>
+        </div>
+
+
+      </ion-card-content>
+    </ion-card>
   </div>
 </ion-content>
