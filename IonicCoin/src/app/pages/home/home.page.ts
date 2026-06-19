@@ -23,7 +23,7 @@ import {
   IonBadge 
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { cashOutline, swapHorizontalOutline, cloudDoneOutline, cloudOfflineOutline, alertCircleOutline, timeOutline } from 'ionicons/icons';
+import { cashOutline, swapHorizontalOutline, cloudDoneOutline, cloudOfflineOutline, alertCircleOutline, timeOutline, settingsOutline } from 'ionicons/icons';
 import { ExchangeRateService } from '../../services/exchange-rate.service';
 import { CurrencyService } from '../../services/currency.service';
 import { StorageService } from '../../services/storage.service';
@@ -85,7 +85,7 @@ export class HomePage implements OnInit {
     private currencyService: CurrencyService,
     private storageService: StorageService
   ) {
-    addIcons({ cashOutline, swapHorizontalOutline, cloudDoneOutline, cloudOfflineOutline, alertCircleOutline, timeOutline });
+    addIcons({ cashOutline, swapHorizontalOutline, cloudDoneOutline, cloudOfflineOutline, alertCircleOutline, timeOutline, settingsOutline });
   }
 
   ngOnInit() {
@@ -97,6 +97,26 @@ export class HomePage implements OnInit {
   async loadRates(baseCode: string) {
     this.isLoading = true;
     this.errorMessage = null;
+
+    // Lógica de Frequência de Atualização
+    const savedFrequency = await this.storageService.get('update_frequency') || 'hourly';
+    
+    if (savedFrequency === 'manual' || savedFrequency === 'hourly') {
+      const cachedData = await this.storageService.getRates(baseCode);
+      if (cachedData && cachedData.timestamp) {
+        const timeElapsed = Date.now() - cachedData.timestamp;
+        
+        // Se for manual OU for hourly e passou menos de 1 hora (3600000 ms)
+        if (savedFrequency === 'manual' || (savedFrequency === 'hourly' && timeElapsed < 3600000)) {
+          const cached = await this.loadFromCache(baseCode);
+          if (cached) {
+            this.isOffline = !navigator.onLine;
+            this.isLoading = false;
+            return;
+          }
+        }
+      }
+    }
 
     // Se offline, tenta obter taxas do cache local diretamente
     if (!navigator.onLine) {
