@@ -3,7 +3,11 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  apiBaseUrl: 'https://v6.exchangerate-api.com/v6',
+  apiKey: 'YOUR_API_KEY',
+  useFallbackApi: true,
+  fallbackApiUrl: 'https://open.er-api.com/v6/latest'
 };
 
 /*
