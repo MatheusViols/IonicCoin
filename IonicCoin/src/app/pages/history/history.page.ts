@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { ViewWillEnter } from '@ionic/angular';
 import { 
   IonHeader, 
   IonToolbar, 
@@ -11,20 +12,13 @@ import {
   IonButton, 
   IonIcon, 
   IonCard, 
-  IonCardContent
+  IonCardContent,
+  IonSpinner
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { trashOutline, timeOutline, alertCircleOutline } from 'ionicons/icons';
-
-export interface MockConversion {
-  id: string;
-  fromCurrency: string;
-  toCurrency: string;
-  amount: number;
-  result: number;
-  rate: number;
-  timestamp: number;
-}
+import { StorageService } from '../../services/storage.service';
+import { Conversion } from '../../models/conversion.model';
 
 @Component({
   selector: 'app-history',
@@ -32,6 +26,7 @@ export interface MockConversion {
   styleUrls: ['./history.page.scss'],
   imports: [
     CommonModule,
+    DatePipe,
     DecimalPipe,
     RouterLink,
     IonHeader, 
@@ -43,60 +38,47 @@ export interface MockConversion {
     IonButton, 
     IonIcon, 
     IonCard, 
-    IonCardContent
+    IonCardContent,
+    IonSpinner
   ]
 })
-export class HistoryPage {
-  // Lista fictícia de conversões mockadas para visualização de layout
-  mockConversions: MockConversion[] = [
-    {
-      id: '1',
-      fromCurrency: 'USD',
-      toCurrency: 'BRL',
-      amount: 100,
-      result: 542.50,
-      rate: 5.4250,
-      timestamp: Date.now() - 600000 // 10 minutos atrás
-    },
-    {
-      id: '2',
-      fromCurrency: 'EUR',
-      toCurrency: 'USD',
-      amount: 50,
-      result: 54.12,
-      rate: 1.0824,
-      timestamp: Date.now() - 3600000 // 1 hora atrás
-    },
-    {
-      id: '3',
-      fromCurrency: 'GBP',
-      toCurrency: 'BRL',
-      amount: 80,
-      result: 554.88,
-      rate: 6.9360,
-      timestamp: Date.now() - 86400000 // 1 dia atrás
-    },
-    {
-      id: '4',
-      fromCurrency: 'USD',
-      toCurrency: 'ARS',
-      amount: 10,
-      result: 9050.00,
-      rate: 905.0000,
-      timestamp: Date.now() - 172800000 // 2 dias atrás
-    }
-  ];
-
-  // Controle de estado vazio para testes visuais
+export class HistoryPage implements ViewWillEnter {
+  conversions: Conversion[] = [];
+  isLoading: boolean = false;
   showEmptyState: boolean = false;
 
-  constructor() {
+  constructor(private storageService: StorageService) {
     addIcons({ trashOutline, timeOutline, alertCircleOutline });
   }
 
-  // Simula a limpeza do histórico para testar a transição visual
-  clearHistory() {
-    this.showEmptyState = true;
-    this.mockConversions = [];
+  /** Chamado pelo Ionic sempre que a página entra em foco (inclusive ao voltar para ela) */
+  ionViewWillEnter() {
+    this.loadHistory();
+  }
+
+  /** Carrega o histórico de conversões do storage persistente */
+  async loadHistory() {
+    this.isLoading = true;
+    try {
+      this.conversions = await this.storageService.getHistory();
+      this.showEmptyState = this.conversions.length === 0;
+    } catch (err) {
+      console.error('Erro ao carregar histórico:', err);
+      this.conversions = [];
+      this.showEmptyState = true;
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  /** Limpa todo o histórico de conversões do storage */
+  async clearHistory() {
+    try {
+      await this.storageService.clearHistory();
+      this.conversions = [];
+      this.showEmptyState = true;
+    } catch (err) {
+      console.error('Erro ao limpar histórico:', err);
+    }
   }
 }
