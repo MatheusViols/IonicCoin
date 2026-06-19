@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { ExchangeRateResponse } from '../models/currency.model';
 
@@ -21,7 +21,13 @@ export class ExchangeRateService {
       url = `${environment.apiBaseUrl}/${environment.apiKey}/latest/${baseCode}`;
     }
 
-    return this.http.get<ExchangeRateResponse>(url).pipe(
+    return this.http.get<any>(url).pipe(
+      map(response => {
+        if (response && response.rates && !response.conversion_rates) {
+          response.conversion_rates = response.rates;
+        }
+        return response as ExchangeRateResponse;
+      }),
       catchError(this.handleError)
     );
   }

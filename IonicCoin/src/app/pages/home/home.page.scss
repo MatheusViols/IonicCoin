@@ -193,3 +193,19 @@ ion-toolbar {
     }
   }
 }
+
+// Estado de carregamento
+.result-section.is-loading {
+  opacity: 0.6;
+}
+
+// Animação de pulso durante o carregamento das taxas
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.loading-pulse {
+  animation: pulse 1.2s ease-in-out infinite;
+  color: var(--ion-color-step-500) !important;
+}
