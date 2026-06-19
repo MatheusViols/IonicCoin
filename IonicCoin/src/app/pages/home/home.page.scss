@@ -66,22 +66,15 @@ ion-toolbar {
 .input-container {
   margin-bottom: 20px;
 
-  .amount-item {
+  .amount-input {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
     --border-radius: 12px;
-    --background: var(--ion-color-step-50, #fcfcfc);
-    --border-color: var(--ion-color-step-200);
-    
-    &.item-has-focus {
-      --border-color: var(--primary-color);
-      --border-width: 2px;
-    }
-    
-    .amount-input {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      --padding-start: 8px;
-    }
+    --background: rgba(56, 128, 255, 0.05);
+    --border-color: rgba(56, 128, 255, 0.3);
+    --highlight-color-focused: var(--primary-color);
+    --padding-start: 12px;
   }
 }
 
