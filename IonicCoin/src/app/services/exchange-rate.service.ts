@@ -1,16 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { map, tap, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { ExchangeRateResponse } from '../models/currency.model';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExchangeRateService {
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private storageService: StorageService
+  ) {}
 
   getExchangeRates(baseCode: string = 'USD'): Observable<ExchangeRateResponse> {
     let url = '';
@@ -21,7 +25,20 @@ export class ExchangeRateService {
       url = `${environment.apiBaseUrl}/${environment.apiKey}/latest/${baseCode}`;
     }
 
-    return this.http.get<ExchangeRateResponse>(url).pipe(
+    return this.http.get<any>(url).pipe(
+      map(response => {
+        if (response && response.rates && !response.conversion_rates) {
+          response.conversion_rates = response.rates;
+        }
+        return response as ExchangeRateResponse;
+      }),
+      tap(response => {
+        if (response && response.conversion_rates) {
+          this.storageService.saveRates(baseCode, response).catch(err => {
+            console.error('Erro ao salvar taxas no Storage:', err);
+          });
+        }
+      }),
       catchError(this.handleError)
     );
   }

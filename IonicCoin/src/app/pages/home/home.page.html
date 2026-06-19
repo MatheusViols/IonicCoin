@@ -24,6 +24,14 @@
       </ion-card-header>
 
       <ion-card-content>
+        <!-- Mensagem de Erro -->
+        @if (errorMessage) {
+          <div class="error-container">
+            <ion-icon name="alert-circle-outline" class="error-icon"></ion-icon>
+            <span class="error-text">{{ errorMessage }}</span>
+          </div>
+        }
+
         <!-- Campo de entrada do valor -->
         <div class="input-container">
           <ion-input 
@@ -31,7 +39,9 @@
             type="number" 
             placeholder="0,00" 
             inputmode="decimal"
-            class="amount-input">
+            class="amount-input"
+            [value]="amount"
+            (ionInput)="onAmountChange($event)">
           </ion-input>
         </div>
 
@@ -40,16 +50,21 @@
           <div class="select-box">
             <ion-label class="select-label">De</ion-label>
             <ion-item fill="outline">
-              <ion-select placeholder="Selecione">
-                <ion-select-option value="USD">USD - Dólar Americano</ion-select-option>
-                <ion-select-option value="BRL">BRL - Real Brasileiro</ion-select-option>
-                <ion-select-option value="EUR">EUR - Euro</ion-select-option>
+              <ion-select 
+                [(ngModel)]="fromCurrency"
+                (ionChange)="onFromCurrencyChange()"
+                placeholder="Selecione">
+                @for (currency of currencies; track currency.code) {
+                  <ion-select-option [value]="currency.code">
+                    {{ currency.code }} - {{ currency.name }}
+                  </ion-select-option>
+                }
               </ion-select>
             </ion-item>
           </div>
 
           <div class="swap-button-container">
-            <ion-button fill="clear" class="swap-btn">
+            <ion-button fill="clear" class="swap-btn" (click)="swapCurrencies()">
               <ion-icon slot="icon-only" name="swap-horizontal-outline"></ion-icon>
             </ion-button>
           </div>
@@ -57,26 +72,47 @@
           <div class="select-box">
             <ion-label class="select-label">Para</ion-label>
             <ion-item fill="outline">
-              <ion-select placeholder="Selecione">
-                <ion-select-option value="USD">USD - Dólar Americano</ion-select-option>
-                <ion-select-option value="BRL">BRL - Real Brasileiro</ion-select-option>
-                <ion-select-option value="EUR">EUR - Euro</ion-select-option>
+              <ion-select 
+                [(ngModel)]="toCurrency"
+                (ionChange)="onToCurrencyChange()"
+                placeholder="Selecione">
+                @for (currency of currencies; track currency.code) {
+                  <ion-select-option [value]="currency.code">
+                    {{ currency.code }} - {{ currency.name }}
+                  </ion-select-option>
+                }
               </ion-select>
             </ion-item>
           </div>
         </div>
 
         <!-- Área de Resultado e Taxas -->
-        <div class="result-section">
+        <div class="result-section" [class.is-loading]="isLoading">
           <div class="result-label">Resultado da Conversão</div>
-          <h1 class="result-value">--,--</h1>
-          <p class="rate-info">Carregando taxa de câmbio...</p>
-          <ion-badge color="success" class="status-badge">
-            <ion-icon name="cloud-done-outline"></ion-icon>
-            <span>Taxas Atualizadas</span>
+
+          @if (isLoading) {
+            <h1 class="result-value loading-pulse">...</h1>
+          } @else {
+            <h1 class="result-value">
+              {{ result !== null ? (result | number:'1.2-2') : '--,--' }}
+            </h1>
+          }
+
+          <p class="rate-info">
+            @if (currentRate !== null && !isLoading) {
+              1 {{ fromCurrency }} = {{ currentRate | number:'1.4-4' }} {{ toCurrency }}
+            } @else if (isOffline) {
+              Dados offline — sem conexão com a internet
+            } @else {
+              Carregando taxa de câmbio...
+            }
+          </p>
+
+          <ion-badge [color]="isOffline ? 'warning' : 'success'" class="status-badge">
+            <ion-icon [name]="isOffline ? 'cloud-offline-outline' : 'cloud-done-outline'"></ion-icon>
+            <span>{{ isOffline ? 'Dados offline' : 'Taxas Atualizadas' }}</span>
           </ion-badge>
         </div>
-
 
       </ion-card-content>
     </ion-card>
