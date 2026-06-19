@@ -1,0 +1,183 @@
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Voltar"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Tendência de Câmbio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="chart-container">
+    
+    <!-- Painel de Seleção de Par e Período -->
+    <ion-card class="control-card">
+      <ion-card-content>
+        <div class="selectors-row">
+          <!-- Moeda Origem -->
+          <div class="select-wrapper">
+            <span class="select-label">Base</span>
+            <ion-item lines="none" class="custom-select-item">
+              <ion-select [(ngModel)]="fromCurrency" placeholder="EUR">
+                <ion-select-option value="EUR">EUR - Euro</ion-select-option>
+                <ion-select-option value="USD">USD - Dólar</ion-select-option>
+                <ion-select-option value="GBP">GBP - Libra</ion-select-option>
+                <ion-select-option value="BRL">BRL - Real</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </div>
+
+          <!-- Botão Inverter -->
+          <div class="swap-action-container">
+            <ion-button fill="clear" class="btn-swap-currency" (click)="swapCurrencies()">
+              <ion-icon slot="icon-only" name="swap-horizontal-outline"></ion-icon>
+            </ion-button>
+          </div>
+
+          <!-- Moeda Destino -->
+          <div class="select-wrapper">
+            <span class="select-label">Alvo</span>
+            <ion-item lines="none" class="custom-select-item">
+              <ion-select [(ngModel)]="toCurrency" placeholder="USD">
+                <ion-select-option value="EUR">EUR - Euro</ion-select-option>
+                <ion-select-option value="USD">USD - Dólar</ion-select-option>
+                <ion-select-option value="GBP">GBP - Libra</ion-select-option>
+                <ion-select-option value="BRL">BRL - Real</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </div>
+        </div>
+
+        <!-- Seletor de Período Moderno -->
+        <div class="period-segment-container">
+          <ion-segment [(ngModel)]="selectedPeriod" mode="ios" class="custom-segment">
+            <ion-segment-button value="7d">
+              <ion-label>7D</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="30d">
+              <ion-label>30D</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="90d">
+              <ion-label>90D</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="1y">
+              <ion-label>1A</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Painel Principal do Gráfico -->
+    <ion-card class="chart-display-card">
+      <ion-card-header>
+        <div class="chart-header-row">
+          <div>
+            <ion-card-subtitle>Histórico do Par</ion-card-subtitle>
+            <ion-card-title class="par-title">{{ fromCurrency }} / {{ toCurrency }}</ion-card-title>
+          </div>
+          <!-- Badge de Variação Rápida -->
+          <div class="variation-badge-wrapper">
+            <ion-badge [class]="variationType" class="variation-badge">
+              <ion-icon [name]="variationType === 'up' ? 'trending-up-outline' : 'trending-down-outline'"></ion-icon>
+              <span>{{ variationPercentage }}%</span>
+            </ion-badge>
+          </div>
+        </div>
+      </ion-card-header>
+
+      <ion-card-content>
+        <!-- Canvas/Área do Gráfico Real -->
+        <div class="canvas-wrapper">
+          @if (isLoading) {
+            <!-- Overlay de Carregamento Premium -->
+            <div class="loading-overlay">
+              <ion-spinner name="crescent" color="primary"></ion-spinner>
+              <p>A desenhar gráfico histórico...</p>
+            </div>
+            <!-- Esqueleto de Fundo -->
+            <div class="skeleton-chart">
+              <div class="skeleton-bar" style="height: 40%"></div>
+              <div class="skeleton-bar" style="height: 60%"></div>
+              <div class="skeleton-bar" style="height: 50%"></div>
+              <div class="skeleton-bar" style="height: 75%"></div>
+              <div class="skeleton-bar" style="height: 70%"></div>
+              <div class="skeleton-bar" style="height: 85%"></div>
+              <div class="skeleton-bar" style="height: 90%"></div>
+            </div>
+          } @else {
+            <canvas id="historicalRatesChart"></canvas>
+          }
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Grid de Métricas Analíticas -->
+    <div class="metrics-grid">
+      <!-- Card Máximo -->
+      <ion-card class="metric-card">
+        <ion-card-content>
+          <div class="metric-icon-box max-icon">
+            <ion-icon name="arrow-up-circle-outline"></ion-icon>
+          </div>
+          <div class="metric-details">
+            <span class="metric-label">Máximo</span>
+            <h3 class="metric-value">{{ metricMax }}</h3>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Card Mínimo -->
+      <ion-card class="metric-card">
+        <ion-card-content>
+          <div class="metric-icon-box min-icon">
+            <ion-icon name="arrow-down-circle-outline"></ion-icon>
+          </div>
+          <div class="metric-details">
+            <span class="metric-label">Mínimo</span>
+            <h3 class="metric-value">{{ metricMin }}</h3>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Card Média -->
+      <ion-card class="metric-card">
+        <ion-card-content>
+          <div class="metric-icon-box avg-icon">
+            <ion-icon name="analytics-outline"></ion-icon>
+          </div>
+          <div class="metric-details">
+            <span class="metric-label">Média</span>
+            <h3 class="metric-value">{{ metricAvg }}</h3>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Lista Detalhada das Últimas Taxas -->
+    <ion-card class="details-list-card">
+      <ion-card-header>
+        <ion-card-title class="details-title">Valores Diários Recentes</ion-card-title>
+      </ion-card-header>
+      <ion-card-content class="ion-no-padding">
+        <ion-list lines="full" class="rates-list">
+          @for (item of recentRates; track item.date) {
+            <ion-item class="rate-list-item">
+              <ion-label>
+                <h2>{{ item.date }}</h2>
+                <p>Taxa de referência</p>
+              </ion-label>
+              <div slot="end" class="list-value-box">
+                <span class="list-rate">{{ item.value }}</span>
+                <span class="list-change" [class.positive]="item.change >= 0">
+                  {{ item.change >= 0 ? '+' : '' }}{{ item.change }}%
+                </span>
+              </div>
+            </ion-item>
+          }
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+  </div>
+</ion-content>

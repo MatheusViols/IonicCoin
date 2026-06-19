@@ -23,7 +23,7 @@ import {
   IonBadge 
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { cashOutline, swapHorizontalOutline, cloudDoneOutline, cloudOfflineOutline, alertCircleOutline, timeOutline, settingsOutline } from 'ionicons/icons';
+import { cashOutline, swapHorizontalOutline, cloudDoneOutline, cloudOfflineOutline, alertCircleOutline, timeOutline, settingsOutline, trendingUpOutline } from 'ionicons/icons';
 import { ExchangeRateService } from '../../services/exchange-rate.service';
 import { CurrencyService } from '../../services/currency.service';
 import { StorageService } from '../../services/storage.service';
@@ -85,7 +85,7 @@ export class HomePage implements OnInit {
     private currencyService: CurrencyService,
     private storageService: StorageService
   ) {
-    addIcons({ cashOutline, swapHorizontalOutline, cloudDoneOutline, cloudOfflineOutline, alertCircleOutline, timeOutline, settingsOutline });
+    addIcons({ cashOutline, swapHorizontalOutline, cloudDoneOutline, cloudOfflineOutline, alertCircleOutline, timeOutline, settingsOutline, trendingUpOutline });
   }
 
   ngOnInit() {
