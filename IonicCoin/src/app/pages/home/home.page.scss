@@ -26,8 +26,17 @@ ion-toolbar {
 
   .history-nav-btn {
     --color: var(--primary-color);
-    font-size: 20px;
     margin-inline-end: 8px;
+    font-weight: 600;
+
+    ion-icon {
+      font-size: 20px;
+    }
+
+    span {
+      font-size: 14px;
+      margin-inline-start: 4px;
+    }
   }
 }
 
