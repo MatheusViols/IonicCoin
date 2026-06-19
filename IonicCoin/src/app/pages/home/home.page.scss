@@ -209,3 +209,26 @@ ion-toolbar {
   animation: pulse 1.2s ease-in-out infinite;
   color: var(--ion-color-step-500) !important;
 }
+
+// Container de erro
+.error-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(var(--ion-color-danger-rgb, 235, 68, 90), 0.08);
+  border: 1px solid var(--ion-color-danger, #eb445a);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  color: var(--ion-color-danger, #eb445a);
+
+  .error-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .error-text {
+    font-size: 13.86px;
+    font-weight: 500;
+  }
+}

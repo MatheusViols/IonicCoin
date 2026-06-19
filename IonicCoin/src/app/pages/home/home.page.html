@@ -24,6 +24,14 @@
       </ion-card-header>
 
       <ion-card-content>
+        <!-- Mensagem de Erro -->
+        @if (errorMessage) {
+          <div class="error-container">
+            <ion-icon name="alert-circle-outline" class="error-icon"></ion-icon>
+            <span class="error-text">{{ errorMessage }}</span>
+          </div>
+        }
+
         <!-- Campo de entrada do valor -->
         <div class="input-container">
           <ion-input 

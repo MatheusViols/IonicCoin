@@ -21,9 +21,10 @@ import {
   IonBadge 
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { cashOutline, swapHorizontalOutline, cloudDoneOutline, cloudOfflineOutline } from 'ionicons/icons';
+import { cashOutline, swapHorizontalOutline, cloudDoneOutline, cloudOfflineOutline, alertCircleOutline } from 'ionicons/icons';
 import { ExchangeRateService } from '../../services/exchange-rate.service';
 import { CurrencyService } from '../../services/currency.service';
+import { StorageService } from '../../services/storage.service';
 import { Currency } from '../../models/currency.model';
 import { Conversion } from '../../models/conversion.model';
 
@@ -77,9 +78,10 @@ export class HomePage implements OnInit {
 
   constructor(
     private exchangeRateService: ExchangeRateService,
-    private currencyService: CurrencyService
+    private currencyService: CurrencyService,
+    private storageService: StorageService
   ) {
-    addIcons({ cashOutline, swapHorizontalOutline, cloudDoneOutline, cloudOfflineOutline });
+    addIcons({ cashOutline, swapHorizontalOutline, cloudDoneOutline, cloudOfflineOutline, alertCircleOutline });
   }
 
   ngOnInit() {
@@ -88,9 +90,23 @@ export class HomePage implements OnInit {
   }
 
   /** Busca as taxas de câmbio para a moeda base informada */
-  loadRates(baseCode: string) {
+  async loadRates(baseCode: string) {
     this.isLoading = true;
     this.errorMessage = null;
+
+    // Se offline, tenta obter taxas do cache local diretamente
+    if (!navigator.onLine) {
+      const cached = await this.loadFromCache(baseCode);
+      this.isLoading = false;
+      if (!cached) {
+        this.isOffline = true;
+        this.errorMessage = 'Você está offline e não existem taxas salvas no cache para esta moeda.';
+        this.conversionRates = {};
+        this.result = null;
+        this.currentRate = null;
+      }
+      return;
+    }
 
     this.exchangeRateService.getExchangeRates(baseCode).subscribe({
       next: (response) => {
@@ -100,13 +116,37 @@ export class HomePage implements OnInit {
         this.isOffline = false;
         this.calculate();
       },
-      error: (error) => {
+      error: async (error) => {
+        console.warn('Erro ao carregar taxas online, tentando obter do cache local...', error);
+        const cached = await this.loadFromCache(baseCode);
         this.isLoading = false;
-        this.isOffline = true;
-        this.errorMessage = error.message;
-        console.error('Erro ao carregar taxas:', error);
+        if (!cached) {
+          this.isOffline = true;
+          this.errorMessage = 'Erro ao conectar à API de câmbio e nenhum cache local disponível.';
+          this.conversionRates = {};
+          this.result = null;
+          this.currentRate = null;
+        }
       }
     });
+  }
+
+  /** Tenta carregar as taxas salvas localmente no cache */
+  private async loadFromCache(baseCode: string): Promise<boolean> {
+    try {
+      const cachedData = await this.storageService.getRates(baseCode);
+      if (cachedData && cachedData.rates && cachedData.rates.conversion_rates) {
+        this.conversionRates = cachedData.rates.conversion_rates;
+        this.lastUpdated = cachedData.rates.time_last_update_utc;
+        this.isOffline = true;
+        this.errorMessage = null;
+        this.calculate();
+        return true;
+      }
+    } catch (error) {
+      console.error('Erro ao ler taxas do cache:', error);
+    }
+    return false;
   }
 
   /** Calcula o resultado da conversão localmente, sem nova chamada à API */
