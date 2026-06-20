@@ -52,6 +52,23 @@ export class ExchangeRateService {
     
     try {
       await this.storageService.saveRates(baseCode, response);
+      
+      // Guardar a taxa diária para o gráfico (histórico progressivo)
+      const dateStr = new Date().toISOString().split('T')[0];
+      const historyKey = `history_rates_${baseCode}`;
+      const history = await this.storageService.get(historyKey) || {};
+      
+      if (!history[dateStr]) {
+        history[dateStr] = {};
+      }
+      
+      // Atualizar o histórico do dia de hoje com as taxas reais
+      for (const cur of Object.keys(response.conversion_rates)) {
+        history[dateStr][cur] = response.conversion_rates[cur];
+      }
+      
+      await this.storageService.set(historyKey, history);
+      
     } catch (err) {
       console.error('Erro ao salvar taxas no Storage:', err);
     }
