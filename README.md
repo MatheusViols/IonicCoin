@@ -61,16 +61,11 @@ npm install
 ionic serve
 A aplicação será aberta no seu browser em  http://localhost:8100 .
 
-##  Configuração da API
+(Nota: O histórico do gráfico é construído progressivamente de forma local à medida que as taxas reais são obtidas)
 
-A app utiliza a ExchangeRate-API para obter taxas em tempo real. No ficheiro  src/environments/environment.ts  e  environment.prod.ts , atualize com a sua chave:
+### Imagens
+![Home](assets/home.png)
+![Grafico](assets/grafico.png)
+![Historico](assets/historico.png)
+![Configurações](assets/configuracoes.png)
 
-    export const environment = {
-      production: false,
-      apiBaseUrl: 'https://v6.exchangerate-api.com/v6',
-      apiKey: 'SUA_CHAVE_AQUI',
-      useFallbackApi: true, // Use false em produção com uma chave válida
-      fallbackApiUrl: 'https://open.er-api.com/v6/latest'
-    };
-
-(Nota: O histórico do gráfico é construído progressivamente de forma local à medida que as taxas reais são obtidas, eliminando a dependência de endpoints históricos pagos.)
