@@ -18,7 +18,7 @@
           <div class="select-wrapper">
             <span class="select-label">Base</span>
             <ion-item lines="none" class="custom-select-item">
-              <ion-select [(ngModel)]="fromCurrency" placeholder="EUR">
+              <ion-select [(ngModel)]="fromCurrency" placeholder="EUR" (ionChange)="onCurrencyChange()">
                 <ion-select-option value="EUR">EUR - Euro</ion-select-option>
                 <ion-select-option value="USD">USD - Dólar</ion-select-option>
                 <ion-select-option value="GBP">GBP - Libra</ion-select-option>
@@ -38,7 +38,7 @@
           <div class="select-wrapper">
             <span class="select-label">Alvo</span>
             <ion-item lines="none" class="custom-select-item">
-              <ion-select [(ngModel)]="toCurrency" placeholder="USD">
+              <ion-select [(ngModel)]="toCurrency" placeholder="USD" (ionChange)="onCurrencyChange()">
                 <ion-select-option value="EUR">EUR - Euro</ion-select-option>
                 <ion-select-option value="USD">USD - Dólar</ion-select-option>
                 <ion-select-option value="GBP">GBP - Libra</ion-select-option>
@@ -50,7 +50,7 @@
 
         <!-- Seletor de Período Moderno -->
         <div class="period-segment-container">
-          <ion-segment [(ngModel)]="selectedPeriod" mode="ios" class="custom-segment">
+          <ion-segment [(ngModel)]="selectedPeriod" mode="ios" class="custom-segment" (ionChange)="onPeriodChange()">
             <ion-segment-button value="7d">
               <ion-label>7D</ion-label>
             </ion-segment-button>
@@ -104,6 +104,12 @@
               <div class="skeleton-bar" style="height: 70%"></div>
               <div class="skeleton-bar" style="height: 85%"></div>
               <div class="skeleton-bar" style="height: 90%"></div>
+            </div>
+          } @else if (hasError) {
+            <div class="error-overlay">
+              <ion-icon name="alert-circle-outline" class="error-icon"></ion-icon>
+              <p>{{ errorMessage }}</p>
+              <ion-button fill="outline" size="small" (click)="loadChartData()">Tentar novamente</ion-button>
             </div>
           } @else {
             <canvas id="historicalRatesChart"></canvas>
